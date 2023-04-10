@@ -24,21 +24,36 @@ public class Queue {
     public void put(Trk trk) throws InterruptedException {
         synchronized (queue) {
             while (isFull()) {
-                wait();
+                queue.wait();
             }
             queue.add(trk);
-            notifyAll();
+            printQueue();
+            queue.notifyAll();
         }
     }
 
     public Trk get() throws InterruptedException {
         synchronized (queue) {
             while (isEmpty()) {
-                wait();
+                queue.wait();
             }
             Trk trk = queue.remove(0);
-            notifyAll();
+            printQueue();
+            queue.notifyAll();
             return trk;
         }
+    }
+
+    public void printQueue() {
+        String status = "";
+        for (int i = 0; i < queue.size(); i++) {
+            status += "*";
+        }
+        for (int i = 0; i < MAX_SIZE - queue.size(); i++) {
+            status += "-";
+        }
+        System.out.println("-----------------------");
+        System.out.println("| Queue status: " + status + " |");
+        System.out.println("-----------------------");
     }
 }
