@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Queue {
-    private final List<Trk> queue = new ArrayList<Trk>();
-    private final int MAX_SIZE = 5;
+    private final List<Trk> queue;
+    private final int MAX_SIZE;
+
+    public Queue(int MAX_SIZE) {
+        this.MAX_SIZE = MAX_SIZE;
+        queue = new ArrayList<>();
+    }
+
 
     public boolean isEmpty() {
         return queue.isEmpty();
