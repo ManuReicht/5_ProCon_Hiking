@@ -20,18 +20,24 @@ public class TrkProducer implements Runnable {
     @Override
     public void run() {
         Random random = new Random();
-        while (true) {
+        /*while (true) {
             try {
-                Trk trk = createTrk(fileList.get(random.nextInt(0, fileList.size())));
+                Trk trk = JAXB.unmarshal(fileList.get(random.nextInt(0, fileList.size())), Trk.class);
                 queue.put(trk);
                 Thread.sleep(random.nextInt(900, 1100));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-        }
-    }
+        }*/
 
-    public Trk createTrk(File file) {
-        return JAXB.unmarshal(file, Trk.class);
+        fileList.forEach(file -> {
+            try {
+                Trk trk = JAXB.unmarshal(file, Trk.class);
+                queue.push(trk);
+                Thread.sleep(random.nextInt(900, 1100));
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
 }

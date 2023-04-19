@@ -14,4 +14,5 @@ public class Trk {
     @XmlElementWrapper(name = "trkseg")
     @XmlElement(name = "trkpt")
     private List<TrackingPoint> trackingPoints;
+    
 }

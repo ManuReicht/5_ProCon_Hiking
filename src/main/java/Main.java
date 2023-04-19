@@ -1,8 +1,14 @@
 import data.Queue;
 import data.TrkConsumer;
 import data.TrkProducer;
+import observer.LogObserver;
+import observer.PrintObserver;
+import strategy.CalculateDistance;
+import strategy.CalculateElevation;
+import strategy.Strategy;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
@@ -12,38 +18,56 @@ import java.util.stream.Collectors;
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
-        Main main = new Main();
-        List<List<File>> partitionedList = main.getFiles();
+        try {
+            Main main = new Main();
+            List<List<File>> partitionedList = main.getFiles();
 
-        Queue queue = new Queue(5);
+            Queue queue = new Queue(5);
 
-        TrkProducer pro1 = new TrkProducer(queue, partitionedList.get(0));
-        TrkProducer pro2 = new TrkProducer(queue, partitionedList.get(1));
-        TrkProducer pro3 = new TrkProducer(queue, partitionedList.get(2));
-        TrkProducer pro4 = new TrkProducer(queue, partitionedList.get(3));
+            File logFile = Paths.get(System.getProperty("user.dir"), "src", "main", "resources", "out.log").toFile();
+            PrintObserver printObserver = new PrintObserver();
+            LogObserver logObserver = new LogObserver(logFile);
 
-        Thread tPro1 = new Thread(pro1);
-        Thread tPro2 = new Thread(pro2);
-        Thread tPro3 = new Thread(pro3);
-        Thread tPro4 = new Thread(pro4);
 
-        TrkConsumer con1 = new TrkConsumer(queue);
-        TrkConsumer con2 = new TrkConsumer(queue);
-        TrkConsumer con3 = new TrkConsumer(queue);
+            TrkProducer pro1 = new TrkProducer(queue, partitionedList.get(0));
+            TrkProducer pro2 = new TrkProducer(queue, partitionedList.get(1));
+            TrkProducer pro3 = new TrkProducer(queue, partitionedList.get(2));
+            TrkProducer pro4 = new TrkProducer(queue, partitionedList.get(3));
 
-        Thread tCon1 = new Thread(con1);
-        Thread tCon2 = new Thread(con2);
-        Thread tCon3 = new Thread(con3);
+            Thread tPro1 = new Thread(pro1);
+            Thread tPro2 = new Thread(pro2);
+            Thread tPro3 = new Thread(pro3);
+            Thread tPro4 = new Thread(pro4);
 
-        tPro1.start();
-        tPro2.start();
-        tPro3.start();
-        tPro4.start();
+            List<Strategy> strategies = Arrays.asList(new CalculateDistance(), new CalculateElevation());
 
-        tCon1.start();
-        tCon2.start();
-        tCon3.start();
+            TrkConsumer con1 = new TrkConsumer(queue, strategies);
+            TrkConsumer con2 = new TrkConsumer(queue, strategies);
+            TrkConsumer con3 = new TrkConsumer(queue, strategies);
+
+            con1.attach(printObserver);
+            con1.attach(logObserver);
+            con2.attach(printObserver);
+            con2.attach(logObserver);
+            con3.attach(printObserver);
+            con3.attach(logObserver);
+
+            Thread tCon1 = new Thread(con1);
+            Thread tCon2 = new Thread(con2);
+            Thread tCon3 = new Thread(con3);
+
+
+            tPro1.start();
+            tPro2.start();
+            tPro3.start();
+            tPro4.start();
+
+            tCon1.start();
+            tCon2.start();
+            tCon3.start();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public List<List<File>> getFiles() {

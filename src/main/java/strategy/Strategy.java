@@ -1,7 +1,8 @@
 package strategy;
 
+import data.Result;
 import data.Trk;
 
 public interface Strategy {
-    float[] doOperation(Trk trk);
+    void calculate(Trk trk, Result result);
 }

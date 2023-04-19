@@ -6,8 +6,9 @@ import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import lombok.Data;
+import xmladapter.InstantAdapter;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Data
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -18,9 +19,8 @@ public class TrackingPoint {
     @XmlAttribute(name = "lon")
     private double lon;
     @XmlAttribute(name = "ele")
-    private double ele;
-
-    @XmlJavaTypeAdapter(XmlDateAdapter.class)
+    private double elevation;
+    @XmlJavaTypeAdapter(InstantAdapter.class)
     @XmlAttribute(name = "time")
-    private LocalDateTime time;
+    private Instant timestamp;
 }

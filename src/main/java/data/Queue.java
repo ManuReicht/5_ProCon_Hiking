@@ -4,52 +4,52 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Queue {
-    private final List<Trk> queue;
+    private final List<Trk> trks;
     private final int MAX_SIZE;
 
     public Queue(int MAX_SIZE) {
         this.MAX_SIZE = MAX_SIZE;
-        queue = new ArrayList<>();
+        trks = new ArrayList<>();
     }
 
 
     public boolean isEmpty() {
-        return queue.isEmpty();
+        return trks.isEmpty();
     }
 
     public boolean isFull() {
-        return queue.size() >= MAX_SIZE;
+        return trks.size() >= MAX_SIZE;
     }
 
-    public void put(Trk trk) throws InterruptedException {
-        synchronized (queue) {
+    public void push(Trk trk) throws InterruptedException {
+        synchronized (trks) {
             while (isFull()) {
-                queue.wait();
+                trks.wait();
             }
-            queue.add(trk);
+            trks.add(trk);
             printQueue();
-            queue.notifyAll();
+            trks.notifyAll();
         }
     }
 
-    public Trk get() throws InterruptedException {
-        synchronized (queue) {
+    public Trk pop() throws InterruptedException {
+        synchronized (trks) {
             while (isEmpty()) {
-                queue.wait();
+                trks.wait();
             }
-            Trk trk = queue.remove(0);
+            Trk trk = trks.remove(0);
             printQueue();
-            queue.notifyAll();
+            trks.notifyAll();
             return trk;
         }
     }
 
     public void printQueue() {
         String status = "";
-        for (int i = 0; i < queue.size(); i++) {
+        for (int i = 0; i < trks.size(); i++) {
             status += "*";
         }
-        for (int i = 0; i < MAX_SIZE - queue.size(); i++) {
+        for (int i = 0; i < MAX_SIZE - trks.size(); i++) {
             status += "-";
         }
         System.out.println("-----------------------");
